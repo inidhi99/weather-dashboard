@@ -22,4 +22,4 @@ THEN I am again presented with current and future conditions for that city
 
 ## Mock-Up
 The following image shows the web application's appearance and functionality:
-![](06-server-side-apis-homework-demo.jpeg)
+![](assets/06-server-side-apis-homework-demo.jpeg)
