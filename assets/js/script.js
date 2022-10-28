@@ -28,7 +28,6 @@ function renderSearchHistory (){
     }
 }
 
-
 //update local storage 
 //index of - finds the index location 
 function updateStorage (search){
@@ -40,7 +39,6 @@ function updateStorage (search){
     renderSearchHistory();
 } 
 
-
 //bring history out of local storage 
 function getStorage (){
     var storedHistory = localStorage.getItem("history");
@@ -50,36 +48,42 @@ function getStorage (){
     renderSearchHistory();
 }
 
-//to do: function render current weather 
+//function render current weather 
 function currentWeather (e){
     e.preventDefault()
     let cityName = document.getElementById("cityName").value;
-    let url= `${apiUrl}/data/2.5/weather?q=${cityName}&appid=${apiKey}`
+    let url= `${apiUrl}/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=imperial`
     fetch(url)
     .then ((repsonse) => repsonse.json())
     .then((data) => {
         console.log(data)
         let today_div = document.getElementById("today")
 
+         // ??? why are the icon not displaying 
+        let icon_para = document.createElement("p")
+        icon_para.innerHTML =  data.weather[0].icon ;
+
         let temp_para = document.createElement("p")
-        temp_para.innerHTML = `Temp is: ${data.main.temp}.`
+        temp_para.innerHTML = `Temp: ${data.main.temp} F`
 
         let wind_para = document.createElement("p")
-        wind_para.innerHTML = `wind is: ${data.wind.speed}.`
-        today_div.append(temp_para, wind_para);
-        
+        wind_para.innerHTML = `wind: ${data.wind.speed} MPH`
 
+        let humidity_para = document.createElement("p")
+        humidity_para.innerHTML = `humidity: ${data.main.humidity} %`
 
+        today_div.append(temp_para, wind_para, humidity_para, icon_para);
         forecastWeather(cityName);
     });
 } 
 
+// function to handle the click
 searchBtn.addEventListener("click", currentWeather );
 
 
 // to do: function render 5 day forecast card 
 function forecastWeather (cityName){
-    let forecastUrl = `${apiUrl}/data/2.5/forecast?q=${cityName}&appid=${apiKey}`
+    let forecastUrl = `${apiUrl}/data/2.5/forecast?q=${cityName}&appid=${apiKey}&units=imperial`
     fetch(forecastUrl)
     .then ((repsonse) => repsonse.json())
     .then((data) => {
@@ -88,33 +92,45 @@ function forecastWeather (cityName){
         let parentDiv = document.createElement("div")
         parentDiv.style.display = "flex"
 
-
-
         for (let i= 0; i< forecastList.length; i+=8){
-            let forecastDiv = document.createElement("div")
-            forecastDiv.style.border = "1px solid black"
+        let forecastDiv = document.createElement("div")
+        forecastDiv.style.border = "1px solid black"
             
+        // ?? date and time 
+        
+
+
+        // ??? why are the icon not displaying 
+        let icon_para = document.createElement("p")
+        icon_para.innerHTML = forecastList[i].weather[0].icon;
+
         let temp_para = document.createElement("p")
-        temp_para.innerHTML = `Temp is: ${forecastList[i].main.temp}.`
+        temp_para.innerHTML = `Temp: ${forecastList[i].main.temp} F`
 
         let wind_para = document.createElement("p")
-        wind_para.innerHTML = `wind is: ${forecastList[i].wind.speed}.`
-        forecastDiv.append(temp_para, wind_para);
+        wind_para.innerHTML = `wind: ${forecastList[i].wind.speed} MPH`
+
+        let humidity_para = document.createElement("p")
+        humidity_para.innerHTML = `humidity: ${forecastList[i].main.humidity} %`
+
+        forecastDiv.append(temp_para, wind_para, humidity_para, icon_para);
         parentDiv.append(forecastDiv)
-   
         }
-document.getElementById("forecast").append(parentDiv)
+        document.getElementById("forecast").append(parentDiv)
+    
+        });
+    }
 
-    } );
 
-}
-
-// to do: function *5 to get 5 cards (start date - end date )
 
 
 // to do: function api calls - 2 separte api call - city name (lat and long ) - api for the data 
-// to do: function to handle the submit of the search form 
-// to do: function to handle the click
-// to do: function  addeventlistner for submit and clicks 
-// to do: call get storage function: history when reload 
 
+
+
+
+
+// to do: call get storage function: history when reload 
+saved.forEach((histories) => {
+    listBuilder(histories);
+  });
