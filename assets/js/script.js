@@ -9,7 +9,6 @@ var todayContainer = document.querySelector("#today");
 var forecastContainer = document.querySelector("#forecast");
 var searchHistoryContainer = document.querySelector("#history");
 
-
 // access to the library 
 dayjs.extend(window.dayjs_plugin_utc);
 dayjs.extend(window.dayjs_plugin_timezone);
@@ -57,11 +56,12 @@ function currentWeather (e){
     .then ((repsonse) => repsonse.json())
     .then((data) => {
         console.log(data)
+    
         let today_div = document.getElementById("today")
 
          // ??? why are the icon not displaying 
-        let icon_para = document.createElement("p")
-        icon_para.innerHTML =  data.weather[0].icon ;
+        let icon_para = document.createElement("img")
+        icon_para.setAttribute( "src", `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`);
 
         let temp_para = document.createElement("p")
         temp_para.innerHTML = `Temp: ${data.main.temp} F`
@@ -96,8 +96,7 @@ function forecastWeather (cityName){
         let forecastDiv = document.createElement("div")
         forecastDiv.style.border = "1px solid black"
             
-        // ?? date and time 
-        
+        // ?? date 
 
 
         // ??? why are the icon not displaying 
@@ -117,7 +116,6 @@ function forecastWeather (cityName){
         parentDiv.append(forecastDiv)
         }
         document.getElementById("forecast").append(parentDiv)
-    
         });
     }
 
@@ -131,6 +129,4 @@ function forecastWeather (cityName){
 
 
 // to do: call get storage function: history when reload 
-saved.forEach((histories) => {
-    listBuilder(histories);
-  });
+
