@@ -9,11 +9,6 @@ var todayContainer = document.querySelector("#today");
 var forecastContainer = document.querySelector("#forecast");
 var searchHistoryContainer = document.querySelector("#history");
 
-// access to the library 
-dayjs.extend(window.dayjs_plugin_utc);
-dayjs.extend(window.dayjs_plugin_timezone);
-
-
 // items in the seach history and render into the search history container
 function renderSearchHistory (){
     searchHistoryContainer.innerHTML= "";
@@ -46,10 +41,14 @@ function getStorage (){
     }
     renderSearchHistory();
 }
+getStorage();
+
 
 //function render current weather 
 function currentWeather (e){
     e.preventDefault()
+    //clear previous search 
+    todayContainer.innerHTML = ""
     let cityName = document.getElementById("cityName").value;
     let url= `${apiUrl}/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=imperial`
     fetch(url)
@@ -57,9 +56,11 @@ function currentWeather (e){
     .then((data) => {
         console.log(data)
     
-        let today_div = document.getElementById("today")
 
-         // ??? why are the icon not displaying 
+        let date = document.createElement("p")
+        date.innerHTML = moment().format("MM/DD/YYYY")
+   
+
         let icon_para = document.createElement("img")
         icon_para.setAttribute( "src", `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`);
 
@@ -72,9 +73,10 @@ function currentWeather (e){
         let humidity_para = document.createElement("p")
         humidity_para.innerHTML = `humidity: ${data.main.humidity} %`
 
-        today_div.append(temp_para, wind_para, humidity_para, icon_para);
+        todayContainer.append(date, icon_para, temp_para, wind_para, humidity_para);
         forecastWeather(cityName);
     });
+    updateStorage(cityName);
 } 
 
 // function to handle the click
@@ -84,6 +86,7 @@ searchBtn.addEventListener("click", currentWeather );
 // to do: function render 5 day forecast card 
 function forecastWeather (cityName){
     let forecastUrl = `${apiUrl}/data/2.5/forecast?q=${cityName}&appid=${apiKey}&units=imperial`
+    forecastContainer.innerHTML = ""
     fetch(forecastUrl)
     .then ((repsonse) => repsonse.json())
     .then((data) => {
@@ -91,17 +94,20 @@ function forecastWeather (cityName){
         let forecastList = data.list
         let parentDiv = document.createElement("div")
         parentDiv.style.display = "flex"
+        let day = 0;
 
         for (let i= 0; i< forecastList.length; i+=8){
         let forecastDiv = document.createElement("div")
         forecastDiv.style.border = "1px solid black"
             
-        // ?? date 
+        // date ?? 
+        let date = document.createElement("p")
+        day++
+        date.textContent = moment().add(day, "days").format("MM/DD/YYYY")
 
 
-        // ??? why are the icon not displaying 
-        let icon_para = document.createElement("p")
-        icon_para.innerHTML = forecastList[i].weather[0].icon;
+        let icon_para = document.createElement("img")
+        icon_para.setAttribute( "src", `https://openweathermap.org/img/wn/${forecastList[i].weather[0].icon}.png`);
 
         let temp_para = document.createElement("p")
         temp_para.innerHTML = `Temp: ${forecastList[i].main.temp} F`
@@ -112,21 +118,26 @@ function forecastWeather (cityName){
         let humidity_para = document.createElement("p")
         humidity_para.innerHTML = `humidity: ${forecastList[i].main.humidity} %`
 
-        forecastDiv.append(temp_para, wind_para, humidity_para, icon_para);
+        forecastDiv.append(date, icon_para, temp_para, wind_para, humidity_para);
         parentDiv.append(forecastDiv)
-        }
+        } 
         document.getElementById("forecast").append(parentDiv)
-        });
+        }); 
+       
     }
 
 
+var historyBtn = document.querySelector(".history-btn")
+// function to handle the click
+historyBtn.addEventListener("click", currentWeather );
+
+// create function that click of the search history button 
+// jquery (this.)
 
 
-// to do: function api calls - 2 separte api call - city name (lat and long ) - api for the data 
 
 
 
 
 
-// to do: call get storage function: history when reload 
 
