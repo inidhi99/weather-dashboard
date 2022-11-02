@@ -56,11 +56,9 @@ function currentWeather (e){
     .then((data) => {
         console.log(data)
     
-
         let date = document.createElement("p")
         date.innerHTML = moment().format("MM/DD/YYYY")
    
-
         let icon_para = document.createElement("img")
         icon_para.setAttribute( "src", `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`);
 
@@ -100,11 +98,9 @@ function forecastWeather (cityName){
         let forecastDiv = document.createElement("div")
         forecastDiv.style.border = "1px solid black"
             
-        // date ?? 
         let date = document.createElement("p")
         day++
         date.textContent = moment().add(day, "days").format("MM/DD/YYYY")
-
 
         let icon_para = document.createElement("img")
         icon_para.setAttribute( "src", `https://openweathermap.org/img/wn/${forecastList[i].weather[0].icon}.png`);
